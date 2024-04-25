@@ -1,5 +1,6 @@
 from openai import OpenAI
 import os
+from flask import Flask, render_template, url_for, request, redirect
 
 # Read the API key from the text file
 api_key_file = os.path.join(os.path.dirname(__file__), 'api_key.txt')
@@ -9,6 +10,8 @@ with open(api_key_file, 'r') as f:
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Function to ask the user a trivia question
+
+
 def ask_user_trivia_question(user_topic):
     # Prompt the AI to ask the user a trivia question
     response = client.completions.create(
@@ -20,9 +23,9 @@ def ask_user_trivia_question(user_topic):
 
     return response.choices[0].text.strip()
 
-# Function to check user's answer
+    # Function to check user's answer
 def check_answer(user_answer, ai_question):
-     # Prompt the AI to generate the correct answer to the trivia question
+    # Prompt the AI to generate the correct answer to the trivia question
     response = client.completions.create(
         model="gpt-3.5-turbo-instruct",  # Adjust the model as needed
         prompt=f"Tell the user if his answer ({user_answer}) is correct for this question: {ai_question}. Analyse the content of the answer. The answer is still correct even if mispelled or in a sentence. If the answer is incorrect, give him the right answer and a interesting information related to the answer.",
@@ -32,17 +35,19 @@ def check_answer(user_answer, ai_question):
 
     return response.choices[0].text.strip()  # Return the response text
 
-while True:
-# User provides topic
-  topic = input("Choose a topic: ")
+app = Flask(__name__)
 
-  # Ask the user a trivia question
-  ai_question = ask_user_trivia_question(topic)
-  print("AI:", ai_question)
+@app.route('/')
+def index():
+    return ask_user_trivia_question("Music")
 
-  # User provides answer
-  user_answer = input("Your answer: ")
+if __name__ == "__main__":
+    app.run(debug=True)
 
-  # Check user's answer
-  response = check_answer(user_answer, ai_question)
-  print("AI:", response)
+
+
+
+
+
+
+
