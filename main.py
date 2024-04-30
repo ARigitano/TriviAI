@@ -37,9 +37,16 @@ def check_answer(user_answer, ai_question):
 
 app = Flask(__name__)
 
+question = ask_user_trivia_question("Music")
 @app.route('/')
 def index():
-    return ask_user_trivia_question("Music")
+    return render_template("index.html", ai_question=question)
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    user_answer = request.form['user_input']
+    message = check_answer(user_answer, question)
+    return render_template('index.html', message=message)
 
 if __name__ == "__main__":
     app.run(debug=True)
