@@ -1,6 +1,6 @@
 from openai import OpenAI
 import os
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, session
 
 # Read the API key from the text file
 api_key_file = os.path.join(os.path.dirname(__file__), 'api_key.txt')
@@ -11,6 +11,17 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Function to ask the user a trivia question
 
+topic = ""
+def ask_user_trivia_topic():
+    # Prompt the AI to ask the user a trivia topic
+    response = client.completions.create(
+        model="gpt-3.5-turbo-instruct",  # Adjust the model as needed
+        prompt="Ask the user to choose a trivia topic. Speak like a tv show host.",
+        max_tokens=100,
+        temperature=0.5
+    )
+
+    return response.choices[0].text.strip()
 
 def ask_user_trivia_question(user_topic):
     # Prompt the AI to ask the user a trivia question
@@ -37,16 +48,26 @@ def check_answer(user_answer, ai_question):
 
 app = Flask(__name__)
 
-question = ask_user_trivia_question("Music")
+state = 0
 @app.route('/')
 def index():
-    return render_template("index.html", ai_question=question)
+    topic = ask_user_trivia_topic()
+    return render_template("index.html", ai_topic=topic)
 
-@app.route('/submit', methods=['POST'])
-def submit():
-    user_answer = request.form['user_input']
-    message = check_answer(user_answer, question)
-    return render_template('index.html', message=message)
+@app.route('/question', methods=['POST'])
+def play():
+    topic_input = request.form['user_input']
+    # Logic to generate a trivia question for the specified topic
+    question = ask_user_trivia_question(topic_input)
+    return render_template('question.html', ai_question=question)
+
+@app.route('/result', methods=['POST'])
+def result():
+    answer = request.form['user_input']
+    # Logic to check the answer and generate a response
+    question = request.args.get('question')
+    response = check_answer(answer, question)
+    return render_template('result.html', ai_response=response)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class="content"">
+    <H1>TriviAI</H1>
+    <p>{{ ai_response }}</p>
+    <form action="/" method="GRT">
+        <button type="submit">Play Again</button>
+    </form>
+    {% if message %}
+    <p>Hello, {{ message }}</p>
+    {% endif %}
+</div>
+{% endblock %}

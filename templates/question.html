@@ -7,9 +7,9 @@
 {% block body %}
 <div class="content"">
     <H1>TriviAI</H1>
-    <p>{{ ai_topic }}</p>
-    <form action="/question" method="POST">
-        <label for="user_input">Enter a trivia topic:</label>
+    <p>{{ ai_question }}</p>
+    <form action="/result" method="POST">
+        <label for="user_input">Your answer:</label>
         <input type="text" name="user_input" id="user_input">
         <input type="submit" value="Reply">
     </form>
