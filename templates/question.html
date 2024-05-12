@@ -9,8 +9,9 @@
     <H1>TriviAI</H1>
     <p>{{ ai_question }}</p>
     <form action="/result" method="POST">
-        <label for="user_input">Your answer:</label>
-        <input type="text" name="user_input" id="user_input">
+        <input type="hidden" name="question" value="{{ ai_question }}">
+        <label for="user_answer">Your answer:</label>
+        <input type="text" name="user_answer" id="user_answer">
         <input type="submit" value="Reply">
     </form>
 </div>

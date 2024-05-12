@@ -1,6 +1,6 @@
 from openai import OpenAI
 import os
-from flask import Flask, render_template, url_for, request, redirect, session
+from flask import Flask, render_template, url_for, request, redirect
 
 # Read the API key from the text file
 api_key_file = os.path.join(os.path.dirname(__file__), 'api_key.txt')
@@ -9,8 +9,8 @@ with open(api_key_file, 'r') as f:
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-# Function to ask the user a trivia question
 
+# Function to ask the user a trivia topic
 topic = ""
 def ask_user_trivia_topic():
     # Prompt the AI to ask the user a trivia topic
@@ -23,6 +23,8 @@ def ask_user_trivia_topic():
 
     return response.choices[0].text.strip()
 
+
+# Function to ask the user a trivia question
 def ask_user_trivia_question(user_topic):
     # Prompt the AI to ask the user a trivia question
     response = client.completions.create(
@@ -34,7 +36,8 @@ def ask_user_trivia_question(user_topic):
 
     return response.choices[0].text.strip()
 
-    # Function to check user's answer
+
+# Function to check user's answer
 def check_answer(user_answer, ai_question):
     # Prompt the AI to generate the correct answer to the trivia question
     response = client.completions.create(
@@ -46,26 +49,28 @@ def check_answer(user_answer, ai_question):
 
     return response.choices[0].text.strip()  # Return the response text
 
+
 app = Flask(__name__)
 
+# Page asks the user to enter a topic
 state = 0
 @app.route('/')
 def index():
     topic = ask_user_trivia_topic()
     return render_template("index.html", ai_topic=topic)
 
+# Page asks the user to answer a question
 @app.route('/question', methods=['POST'])
 def play():
-    topic_input = request.form['user_input']
-    # Logic to generate a trivia question for the specified topic
+    topic_input = request.form['user_topic']
     question = ask_user_trivia_question(topic_input)
     return render_template('question.html', ai_question=question)
 
+# Page shows the user the answer
 @app.route('/result', methods=['POST'])
 def result():
-    answer = request.form['user_input']
-    # Logic to check the answer and generate a response
-    question = request.args.get('question')
+    answer = request.form['user_answer']
+    question = request.form['question']
     response = check_answer(answer, question)
     return render_template('result.html', ai_response=response)
 
