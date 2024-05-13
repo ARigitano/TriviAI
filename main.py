@@ -42,7 +42,7 @@ def check_answer(user_answer, ai_question):
     # Prompt the AI to generate the correct answer to the trivia question
     response = client.completions.create(
         model="gpt-3.5-turbo-instruct",  # Adjust the model as needed
-        prompt=f"Tell the user if his answer ({user_answer}) is correct for this question: {ai_question}. Analyse the content of the answer. The answer is still correct even if mispelled or in a sentence. If the answer is incorrect, give him the right answer and a interesting information related to the answer.",
+        prompt=f"Tell the user if his answer ({user_answer}) is correct or not for this question: {ai_question}. Analyse the content of the answer. The answer is still correct even if mispelled or in a sentence. If the answer is incorrect, give the user the right answer and a interesting information related to the answer.",
         max_tokens=100,
         temperature=0.5
     )
